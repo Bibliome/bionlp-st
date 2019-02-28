@@ -618,51 +618,6 @@ var initLoaderWidget = function() {
 	});
 }
 
-var showLoggedIn = function() {
-	var profile = global.auth2.currentUser.get().getBasicProfile();
-	$('#wid-login').css('display', 'none');
-	$('#wid-logout').css('display', 'block');
-	$('#wid-username').text(profile.getName() + ' (' + profile.getEmail() + ')');
-	$('#wid-username').css('display', 'block');
-}
-
-var showLoggedOut = function() {
-	$('#wid-login').css('display', 'block');
-	$('#wid-logout').css('display', 'none');
-	$('#wid-username').text('');
-	$('#wid-username').css('display', 'none');
-}
-
-var initMenuBar = function() {
-	$('#wid-login').jqxButton({
-		theme: THEME,
-		template: 'link',
-		width: 'auto',
-		height: 24
-	});
-	$('#wid-login').on('click', function() {
-		global.auth2.signIn();
-	});
-	
-	$('#wid-logout').jqxButton({
-		theme: THEME,
-		template: 'link',
-		width: 'auto',
-		height: 24
-
-	});
-	$('#wid-logout').on('click', function() {
-		global.auth2.signOut();
-	});
-	
-	$('#wid-username').jqxButton({
-		theme: THEME,
-		template: 'link',
-		width: 'auto',
-		height: 24
-	});
-}
-
 var initOutputTabs = function() {
 	$('#sec-output').jqxTabs({
 		theme: THEME,
@@ -1099,10 +1054,6 @@ var TOOLTIPS =
  {
 	 selector: '#tab-compare',
 	 contents: 'Compare submissions, yours and other\'s'
- },
- {
-	 selector: '#wid-login',
-	 contents: 'Sign in with a Google account.'
  }
 ];
 
@@ -1132,7 +1083,6 @@ var initWidgets = function() {
     initOutputTabs();
     initTree();
     initDeleteSubmissions();
-    initMenuBar();
     initSubmissionNotifications();
     initTooltips(TOOLTIPS);
 }
@@ -1149,7 +1099,6 @@ $(document).ready(function () {
 			});
 			global.auth2.isSignedIn.listen(function(status) {
 				if (status) {
-					showLoggedIn();
 					if (global['last-result'] && global['last-result'].evaluation && global['last-result'].evaluation['submission-id']) {
 						$.ajax({
 							url: getURLWithToken('api/submission/'+global['last-result'].evaluation['submission-id']+'/set-owner'),
@@ -1167,7 +1116,6 @@ $(document).ready(function () {
 				}
 				else {
 					global['last-result'] = null;
-					showLoggedOut();
 					updateSubmissions();
 				}
 			});
