@@ -953,61 +953,6 @@ var updateSubmissions = function() {
 	}
 }
 
-var initTree = function() {
-	$('#wid-show-tree').jqxButton({
-		theme: THEME
-	});
-	
-	$('#sec-tree').jqxPopover({
-		theme: THEME,
-		showCloseButton: true,
-		selector: $('#wid-show-tree'),
-		animationType: 'fade',
-		position: 'left',
-		title: 'Show/Hide columns',
-		width: 250,
-		showArrow: false
-	});
-}
-
-var initDeleteSubmissions = function() {
-	$('#wid-delete-submissions').jqxButton({
-		theme: THEME
-	});
-	$('#wid-delete-submissions').on('click', function(event) {
-		var rows = $('#wid-submissions').jqxGrid('getrows');
-		var queryParams = '';
-		for (var i = 0; i < rows.length; ++i) {
-			var sub =rows[i];
-			if (sub.todo) {
-				var prefix;
-				if (queryParams == '') {
-					prefix = '?id=';
-				}
-				else {
-					prefix = ',';
-				}
-				queryParams = queryParams + prefix + sub.id;
-			}
-		}
-		if (queryParams == '') {
-			return;
-		}
-		$.ajax({
-			url: getURLWithToken('api/delete-submissions' + queryParams),
-			success: function(data, status, xhr) {
-				displayMessages(data);
-				if (data.success) {
-					updateSubmissions();
-				}
-				else {
-					$('#sec-output').jqxTabs('select', 1);
-				}
-			}
-		});
-	});
-}
-
 //HEROTHEME = 'darkblue';
 HEROTHEME = 'highcontrast';
 //HEROTHEME = 'metrodark';
@@ -1050,10 +995,6 @@ var TOOLTIPS =
  {
 	 selector: '#tab-messages',
 	 contents: 'Warning and errors raised by the last submission uploaded'
- },
- {
-	 selector: '#tab-compare',
-	 contents: 'Compare submissions, yours and other\'s'
  }
 ];
 
@@ -1081,8 +1022,6 @@ var initWidgets = function() {
     initLoaderWidget();
     initNotificationWidget();
     initOutputTabs();
-    initTree();
-    initDeleteSubmissions();
     initSubmissionNotifications();
     initTooltips(TOOLTIPS);
 }
