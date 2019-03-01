@@ -737,10 +737,6 @@ var getTaskData = function() {
 	for (var i = 0; i < task.evaluations.length; ++i) {
 		var eval = task.evaluations[i];
 		var evalPrefix = eval.name + '__';
-//		columnGroups.push({
-//			name: eval.name,
-//			text: eval.name
-//		});
 		for (var j = 0; j < eval.scorings.length; ++j) {
 			var scoring = eval.scorings[j];
 			var scoringColumnGroup = evalPrefix + scoring.name;
@@ -748,7 +744,6 @@ var getTaskData = function() {
 				name: scoringColumnGroup,
 				text: scoring.name,
 				align: 'center'
-//				parentgroup: eval.name
 			});
 			var scoringTreeItems = [];
 			tree.push({
@@ -885,7 +880,6 @@ var initWidgets = function() {
     initSetsWidget();
     initActionWidget();
     initDetailedWidget();
-//    initAlternateWidget();
     initUploadWidget();
     initLoaderWidget();
     initNotificationWidget();
@@ -894,35 +888,6 @@ var initWidgets = function() {
     initTooltips(TOOLTIPS);
 }
 
-var gapi;
-
 $(document).ready(function () {
-	if (gapi) {
-		gapi.load('auth2', function() {
-			global.auth2 = gapi.auth2.init({
-				client_id: '1074131217576-go8od7l068ntmvapkh7erd7mu6c0kg96.apps.googleusercontent.com',
-				fetch_basic_profile: true,
-				scope: 'profile'
-			});
-			global.auth2.isSignedIn.listen(function(status) {
-				if (status) {
-					if (global['last-result'] && global['last-result'].evaluation && global['last-result'].evaluation['submission-id']) {
-						$.ajax({
-							url: getURLWithToken('api/submission/'+global['last-result'].evaluation['submission-id']+'/set-owner'),
-							success: function(data, status, xhr) {
-								displayMessages(data);
-								if (!data.success) {
-									$('#sec-output').jqxTabs('select', 1);
-								}
-							}
-						});
-					}
-				}
-				else {
-					global['last-result'] = null;
-				}
-			});
-		});
-	}
 	initWidgets();
 });

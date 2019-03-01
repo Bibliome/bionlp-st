@@ -10,23 +10,6 @@ body {
 	height: 6mm;
 }
 
-#wid-login {
-	float: right;
-	margin-right: 2mm;
-}
-
-#wid-logout {
-	float: right;
-	margin-right: 2mm;
-	display: none;
-}
-
-#wid-username {
-	float: right;
-	margin-right: 2mm;
-	display: none;
-}
-
 .jqx-link {
 	color: black !important;
 }
@@ -171,14 +154,6 @@ body {
 	margin-left: 3mm;
 }
 
-/* #wid-alternate {
-	margin-top: 5mm;
-}
-
-#label-alternate {
-	margin-left: 3mm;
-}
- */
 #help-upload {
 	
 }
@@ -312,50 +287,6 @@ body {
 
 .detail-similarity {
 	font-family: monospace;
-}
-
-#sec-compare {
-}
-
-#wid-submissions {
-	margin: 3mm;
-}
-
-.my-last-submission {
-	background-color: #77FF77 !important;
-}
-
-.my-submission {
-	background-color: #DDFFDD !important;
-}
-
-.delete-submission:hover {
-	cursor: pointer;
-}
-
-.delete-submission {
-	font-size: 80%;
-	margin-top: 3px;
-	margin-left: 5px;
-	color: maroon;
-}
-
-#wid-show-tree {
-	margin-left: 3mm;
-	margin-top: 3mm;
-}
-
-#wid-delete-submissions {
-	margin-left: 10mm;
-	margin-top: 3mm;
-}
-
-#wid-tree {
-	padding: 1mm;
-}
-
-#sec-tree {
-	
 }
 
 #sec-footer {
