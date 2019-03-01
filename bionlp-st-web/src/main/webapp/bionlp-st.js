@@ -77,7 +77,6 @@ var _selectTask = function(task) {
 		bg.jqxButtonGroup('disableAt', 3);
 	}
 	global.taskName = task.name;
-	updateSubmissions();
 }
 
 var _getTask = function(index) {
@@ -822,137 +821,6 @@ var getTaskData = function() {
 	};
 }
 
-var getSubmissionsData = function(submissions, helper) {
-	var result = [];
-	for (var i = 0; i < submissions.length; ++i) {
-		var sub = submissions[i];
-		var last = global['last-result'] != null && global['last-result'].evaluation['submission-id'] == sub.id;
-		var row = {
-				id: sub.id,
-				me: sub.me,
-				last: last,
-				team: sub.owner,
-				date: sub.date,
-				set: sub.set,
-				priv: sub['private'],
-				description: sub.description,
-				todo: false
-		};
-		for (var j = 0; j < helper.length; ++j) {
-			var h = helper[j];
-			try {
-				row[h.field] = sub.evaluations[h.eval][h.scoring][h.measure];
-			}
-			catch (err) {
-				row[h.field] = null
-			}
-		}
-		result.push(row);
-	}
-	return result;
-}
-
-var updateDescription = function (rowid, rowdata, commit) {
-	if (rowdata.me) {
-		$.ajax({
-			url: getURLWithToken('api/submission/'+rowdata.id+'/set-description?description='+rowdata.description),
-			error: function(xhr, status, error) {
-				commit(false);
-			},
-			success: function(data, status, xhr) {
-				commit(true);
-			}	
-		});
-	}
-	else {
-		commit(false);
-	}
-}
-
-var showSubmissions = function() {
-	$('#wid-loader').jqxLoader('open');
-	$.ajax({
-		url: getURLWithToken('api/task/'+global.taskName+'/submissions'),
-		error: function(xhr, status, error) {
-			console.log(error);
-		},
-		success: function(data, status, xhr) {
-			$('#wid-loader').jqxLoader('close');
-			var taskData = getTaskData();
-			
-			$('#wid-tree').jqxTree('destroy');
-			$('#sec-tree').append('<div id="wid-tree"></div>');
-			$('#wid-tree').jqxTree({
-				theme: THEME,
-				source: taskData.tree,
-				checkboxes: true,
-				hasThreeStates: true,
-				enableHover: false,
-				toggleMode: 'click'
-			});
-			$('#wid-tree').on('checkChange', function (event) {
-                var item = $('#wid-tree').jqxTree('getItem', event.args.element);
-                if (item.checked == true) {
-                	$('#wid-submissions').jqxGrid('showcolumn', item.id);
-                }
-                if (item.checked == false) {
-                	$('#wid-submissions').jqxGrid('hidecolumn', item.id);
-                }
-			});
-			
-			$('#wid-submissions').jqxGrid('destroy');
-			$('#sec-compare').append('<div id="wid-submissions"></div>');
-			var submissionsData = getSubmissionsData(data.submissions, taskData.helper);
-			var cellBeginEdit = function(row, datafield, columntype, value) {
-				return (datafield == 'description' || datafield == 'todo') && submissionsData[row].me;
-			}
-			var cellsRenderer = function(rowNum, columnField, value, defaultHTML, columnProperties, data) {
-				if (columnField == 'todo' && !data.me) {
-				}
-				return defaultHTML;
-			}
-			for (var i = 0; i < taskData.columns.length; ++i) {
-				var col = taskData.columns[i];
-				col.cellbeginedit = cellBeginEdit;
-				//col.cellsrenderer = cellsRenderer;
-			}
-			var dataAdapter = new $.jqx.dataAdapter({
-				dataType: 'json',
-				dataFields: taskData.dataFields,
-				id: 'id',
-				localData: getSubmissionsData(data.submissions, taskData.helper),
-				updaterow: updateDescription
-			});
-			$('#wid-submissions').jqxGrid({
-				theme: THEME,
-				source: dataAdapter,
-		        columnsresize: true,
-		        sortable: true,
-		        filterable: true,
-		        groupable: true,
-		        pageable: true,
-		        pagesize: 20,
-		        pagesizeoptions: ['20', '50', '100'],
-		        showaggregates: true,
-		        showstatusbar: true,
-		        statusbarheight: 25,
-		        autoheight: true,
-		        width: taskData.width,
-		        editable: true,
-		        enabletooltips: true,
-				columns: taskData.columns,
-				columngroups: taskData.columnGroups,
-			});
-		}
-	});
-}
-
-var updateSubmissions = function() {
-	if ($('#sec-output').jqxTabs('val') == 2) {
-		showSubmissions();
-	}
-}
-
 //HEROTHEME = 'darkblue';
 HEROTHEME = 'highcontrast';
 //HEROTHEME = 'metrodark';
@@ -1043,10 +911,7 @@ $(document).ready(function () {
 							url: getURLWithToken('api/submission/'+global['last-result'].evaluation['submission-id']+'/set-owner'),
 							success: function(data, status, xhr) {
 								displayMessages(data);
-								if (data.success) {
-									updateSubmissions();
-								}
-								else {
+								if (!data.success) {
 									$('#sec-output').jqxTabs('select', 1);
 								}
 							}
@@ -1055,7 +920,6 @@ $(document).ready(function () {
 				}
 				else {
 					global['last-result'] = null;
-					updateSubmissions();
 				}
 			});
 		});
